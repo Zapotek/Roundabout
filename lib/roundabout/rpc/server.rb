@@ -97,6 +97,11 @@ class Roundabout::RPC::Server
         raise 'Required block missing!' if !block_given?
         statuses = [ @crawler.done? ]
 
+        if get_peers_urls.empty?
+            block.call( statuses.first )
+            return
+        end
+
         foreach = proc { |peer, iter| connect( peer ).done? { |s| iter.return( s ) } }
         after = proc { |s| block.call( !(statuses | s).flatten.include?( false ) ) }
         map_peers( foreach, after )
@@ -104,13 +109,24 @@ class Roundabout::RPC::Server
 
     def collect_sitemaps( &block )
         raise 'Required block missing!' if !block_given?
+        local_sitemap = @crawler.sitemap_as_array
+
+        if get_peers_urls.empty?
+            block.call( local_sitemap )
+            return
+        end
 
         foreach = proc { |peer, iter| connect( peer ).sitemap_as_array { |s| iter.return( s ) } }
-        after = proc { |sitemap| block.call( (sitemap | @crawler.sitemap_as_array).flatten.uniq ) }
+        after = proc { |sitemap| block.call( (sitemap | local_sitemap).flatten.uniq ) }
         map_peers( foreach, after )
     end
 
     def kill_all( &block )
+        if get_peers_urls.empty?
+            block.call
+            return
+        end
+
         foreach = proc { |url, iter| connect_to_node( url ).shutdown{ iter.return } }
         after = proc { block.call if block_given? }
         map_peers( foreach, after )
@@ -125,8 +141,12 @@ class Roundabout::RPC::Server
     end
 
     def peer_iter
-        peer_urls = @distributor.peer_urls.reject { |url| url == @crawler.peer_url }
+        peer_urls = get_peers_urls
         ::EM::Iterator.new( peer_urls, peer_urls.size )
+    end
+
+    def get_peers_urls
+        @distributor.peer_urls.reject { |url| url == @crawler.peer_url }
     end
 
     def connect( url )
