@@ -24,8 +24,7 @@ class Roundabout::OptionParser
 Roundabout v#{Roundabout::VERSION} - A high-performance, distributed crawler
 
 Author:        Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
-Website:       <n/a>
-Documentation: <n/a>
+Website:       https://github.com/Zapotek/Roundabout
 
     BANNER
 
