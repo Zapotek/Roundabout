@@ -10,7 +10,7 @@ decision making points and instead focus on an intuitive prioritization and dist
 
 ### Single mode
 
-In single mode the roundabout algorithm is in essence no different that any other basic algorithm.
+In single mode the roundabout algorithm is in essence no different that any other basic crawling algorithm.
 
     ./bin/roundabout testfire.net
 
