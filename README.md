@@ -68,7 +68,50 @@ based on its own policies (if, for example, the path has already been followed, 
 
 ## Architecture
 
-_Comming soon..._
+The system is naturally centered around the crawler, however the crawler by itself is
+quite unimpressive and despite using asynchronous requests for some extra schnell
+it doesn't do much else.
+
+The crawler uses a few external agents to perform tasks like path extraction from
+HTTP responses and workload distribution, with the latter being the focus of this project.
+
+### Path extraction
+
+Path extraction is handled by the PathExtractor class which basically parses the
+HTTP response body and looks for full-fledged URLs and extracts paths from common
+HTML attributes.
+
+It is nothing fancy at all and it is completely interchangeable.
+
+### HTTP interface
+
+The system uses EventMachine::HttpRequest which due to its asynchronous model provides
+respectable network IO performance for each node.
+
+### Workload distribution
+
+Distribution of workload is handled by the Distributor class.
+The main responsibilities of the class is to implement an algorithm for somewhat
+efficient (and predictable) distribution of paths across multiple nodes.
+
+The currently implemented algorithm is very simple and basically computes the
+ordinal sum of a path's characters modulo the amount of nodes.
+The resulting integer is used as an index, identifying to which node to forward
+the given path.
+
+### Crawler
+
+The Crawler class:
+
+1. Performs HTTP requests for each path using the HTTP interface
+2. Uses the PathExtractor to identify more paths
+3. Sanitizes the new paths
+4. Forwards them to the Distributor which feeds them back to the crawlers
+5. Go to 1 until there are no more new paths
+
+### Intra-grid communication
+
+The nodes communicate with each other using the Arachni::RPC protocol.
 
 ## License
 Roundabout is licensed under the Apache License Version 2.0.<br/>
