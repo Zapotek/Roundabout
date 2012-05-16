@@ -72,23 +72,28 @@ class Roundabout::Crawler
         }
     end
 
+    # @return   [TrueClass, FalseClass]  true if crawl is done, false otherwise
     def done?
         @done
     end
 
+    # @return   [Array<String>]  crawled URLs
     def sitemap_as_array
         sitemap.to_a
     end
 
+    # @param    [Block] block   to be run once the crawl completes
     def on_complete( &block )
         raise 'Required block missing!' if !block_given?
         @on_complete_block = block
     end
 
+    # @return   [String]    self url
     def peer_url
         @opts[:host] + ':' + @opts[:port].to_s
     end
 
+    # @param    [Block] block   to be run at the end of {#run}
     def after_run( &block )
         raise 'Required block missing!' if !block_given?
         @after_run_block = block

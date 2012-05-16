@@ -32,20 +32,22 @@ class Roundabout::Distributor
 
     #
     # @param    [Array<Crawler>]   peers   {Crawler}s or RPC clients to them
-    #                                           -- only need to have a {Crawler#push} method
-    #                                           via which to accept new paths
+    #                                           -- need to have {Crawler#push}
+    #                                           and {Crawler#peer_url} methods
     #
     def initialize( peers = [] )
         @peers = []
         add_peers( peers )
     end
 
+    # @return [Array<String>]   URLS of all peers
     def peer_urls
         @peers.map { |p| p.peer_url }
     end
 
+    # @param    [Array<Crawler>]   peers   {Crawler}s or RPC clients to them
     def add_peers( peers )
-        @peers = sort_peers( [peers].flatten )
+        @peers = merge_peers( [peers].flatten )
     end
 
     #
@@ -76,7 +78,16 @@ class Roundabout::Distributor
         @peers[url.bytes.inject( :+ ).modulo( @peers.size )]
     end
 
-    def sort_peers( peers )
+    #
+    # Merges given peers with existing ones returns a sorted array.
+    #
+    # Sorting is important as the array needs to be in the same order across all nodes.
+    #
+    # @param    [Array<Crawler>]   peers   {Crawler}s or RPC clients to them
+    #
+    # @return   [Array<Crawler>]   {Crawler}s or RPC clients to them
+    #
+    def merge_peers( peers )
         crawlers = {}
         (@peers | peers).each { |p| crawlers[p.peer_url] = p }
         Hash[crawlers.sort].values
