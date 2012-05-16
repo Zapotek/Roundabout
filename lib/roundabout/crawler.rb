@@ -67,8 +67,8 @@ class Roundabout::Crawler
         @done = false
         http.on_complete {
             next if !@paths.empty?
-            @on_complete_block.call if @on_complete_block
             @done = true
+            @on_complete_block.call if @on_complete_block
         }
     end
 
@@ -104,6 +104,7 @@ class Roundabout::Crawler
     #
     def run
         while url = @paths.pop
+            @done = false
             puts 'Crawling: ' + url
             visited( url )
 

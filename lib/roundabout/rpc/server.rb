@@ -47,6 +47,7 @@ class Roundabout::RPC::Server
         puts
         puts 'Wait for more peers to join or hit "enter" to start the crawl.'
 
+        @crawler.on_complete { puts 'DONE!' }
         master = Thread.new {
             gets
             set_on_complete_handler
@@ -63,6 +64,7 @@ class Roundabout::RPC::Server
     # Shuts down the server
     #
     def shutdown
+        @crawler.http.shutdown
         ::EM.stop
     end
 

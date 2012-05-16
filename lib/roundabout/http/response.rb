@@ -14,8 +14,6 @@
     limitations under the License.
 =end
 
-require 'em-http-request'
-
 #
 # @author Tasos "Zapotek" Laskos <tasos.laskos@gmail.com>
 #
@@ -32,11 +30,8 @@ class Roundabout::HTTP::Response
     # @return   [Hash]   response headers
     attr_reader :headers
 
-    # @param    [EventMachine::HttpClient]    http
-    def initialize( http )
-        @code = http.response_header.status
-        @body = http.response
-        @url  = http.last_effective_url
-        @headers  = http.response_header
+    # @param    [Hash]    opts
+    def initialize( opts )
+        opts.each { |k, v| instance_variable_set( "@#{k}".to_sym, v ) }
     end
 end

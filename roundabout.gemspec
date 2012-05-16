@@ -42,6 +42,6 @@ decision making points and instead focus on an intuitive prioritization and dist
     s.add_development_dependency 'awesome_print'
 
     s.add_runtime_dependency 'nokogiri'
+    s.add_runtime_dependency 'typhoeus'
     s.add_runtime_dependency 'arachni-rpc-em'
-    s.add_runtime_dependency 'em-http-request'
 end

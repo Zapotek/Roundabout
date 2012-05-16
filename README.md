@@ -93,7 +93,7 @@ It is nothing fancy at all and it is completely interchangeable.
 
 ### HTTP interface
 
-The system uses [EventMachine::HttpRequest](https://github.com/igrigorik/em-http-request) which due to its asynchronous model provides
+The system uses [Typhoeus](https://github.com/dbalatero/typhoeus) which due to its asynchronous model provides
 respectable network IO performance for each node.
 
 ### Workload distribution
