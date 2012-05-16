@@ -3,7 +3,7 @@
 The Roundabout crawler is an experiment on high-performance distributing techniques and their feasibility
 when it comes to website crawling.
 
-The name comes from the overall philosophy of the system which is to bypass
+The name comes from the overall philosophy of the system which is to avoid centralized
 decision making points and instead focus on an intuitive prioritization and distribution algorithm.
 
 ## Install dependencies
