@@ -91,7 +91,7 @@ It is nothing fancy at all and it is completely interchangeable.
 
 ### HTTP interface
 
-The system uses EventMachine::HttpRequest which due to its asynchronous model provides
+The system uses [EventMachine::HttpRequest](https://github.com/igrigorik/em-http-request) which due to its asynchronous model provides
 respectable network IO performance for each node.
 
 ### Workload distribution
@@ -117,7 +117,7 @@ The Crawler class:
 
 ### Intra-grid communication
 
-The nodes communicate with each other using the Arachni::RPC protocol.
+The nodes communicate with each other using the [Arachni-RPC EM](https://github.com/Arachni/arachni-rpc-em) protocol.
 
 ## License
 Roundabout is licensed under the Apache License Version 2.0.<br/>
