@@ -91,6 +91,7 @@ class Roundabout::RPC::Server
 
     private
     def set_on_complete_handler
+        start_timer
         @crawler.on_complete {
             puts 'DONE!'
             ::EM.add_periodic_timer( 1 ) {
@@ -98,9 +99,11 @@ class Roundabout::RPC::Server
 
                 all_done? do |res|
                     if res
+                        time = stop_timer
                         puts 'All done, collecting sitemaps...'
                         collect_sitemaps do |sitemap|
                             print_sitemap( sitemap )
+                            puts "---- Found #{sitemap.size} URLs in #{time} seconds."
                             kill_all { ::EM.stop }
                         end
                     else
@@ -109,6 +112,14 @@ class Roundabout::RPC::Server
                 end
             }
         }
+    end
+
+    def start_timer
+        @timer = Time.now
+    end
+
+    def stop_timer
+        Time.now - @timer if @timer
     end
 
     def print_sitemap( sitemap )
