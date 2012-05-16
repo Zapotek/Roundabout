@@ -23,9 +23,13 @@ Gem::Specification.new do |s|
     s.version     = Roundabout::VERSION
     s.authors     = ["Tasos 'Zapotek' Laskos"]
     s.email       = %w(tasos.laskos@gmail.com)
-    s.homepage    = ""
-    s.summary     = %q{TODO: Write a gem summary}
-    s.description = %q{TODO: Write a gem description}
+    s.homepage    = "https://github.com/Zapotek/Roundabout"
+    s.summary     = %q{High-performance, distributed crawler.}
+    s.description = %q{The Roundabout crawler is an experiment on high-performance
+    distributing techniques and their feasibility when it comes to website crawling.
+
+    The name comes from the overall philosophy of the system which is to bypass
+decision making points and instead focus on an intuitive prioritization and distribution algorithm.}
     s.files       = Dir.glob("lib/**/**")
 
     s.test_files    = %w(spec)
