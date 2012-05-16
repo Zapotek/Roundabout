@@ -72,6 +72,8 @@ the appropriate peer and then forget about it.
 The receiving peer then decides whether to include that path on its workload
 based on its own policies (if, for example, the path has already been followed, it will be ignored).
 
+Interesting fact, new nodes can seamlessly be added to the grid even during an active crawl.
+
 ## Architecture
 
 The system is naturally centered around the crawler, however the crawler by itself is
