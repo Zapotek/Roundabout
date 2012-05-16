@@ -62,6 +62,8 @@ class Roundabout::Crawler
         @distributor    = interfaces[:distributor] || Roundabout::Distributor.new( [self] )
 
         @on_complete_block = nil
+        @after_run_block   = nil
+
         @done = false
         http.on_complete {
             next if !@paths.empty?
@@ -87,6 +89,11 @@ class Roundabout::Crawler
         @opts[:host] + ':' + @opts[:port].to_s
     end
 
+    def after_run( &block )
+        raise 'Required block missing!' if !block_given?
+        @after_run_block = block
+    end
+
     #
     # Performs the crawl
     #
@@ -96,10 +103,15 @@ class Roundabout::Crawler
             visited( url )
 
             http.get( url ) do |response|
-                puts ' ----------- ' + response.url
-                distributor.distribute( extract_paths( response.body ) )
+                new_paths = extract_paths( response.body )
+                puts ' ----------- ' + response.url +
+                    ' [' + new_paths.size.to_s + ' new paths]'
+                distributor.distribute( new_paths )
             end
         end
+
+        @after_run_block.call if @after_run_block
+        true
     end
 
     #
@@ -204,7 +216,7 @@ class Roundabout::Crawler
     end
 
     def extract_paths( html )
-        dedup( path_extractor.run( Nokogiri::HTML( html ) ) )
+        dedup( path_extractor.run( Nokogiri::HTML( html ) ) ) rescue []
     end
 
     def dedup( urls )

@@ -29,7 +29,7 @@ class Roundabout::RPC::Server
         #
         # Methods that expect a block are async
         #
-        # I.e. they pass their result to their given block and don't return it
+        # I.e. they pass their result to their given block instead of returning it
         #
         server.add_async_check do |method|
             method.parameters.flatten.include?( :block )
@@ -47,17 +47,33 @@ class Roundabout::RPC::Server
         puts
         puts 'Wait for more peers to join or hit "enter" to start the crawl.'
 
-        ::EM.defer {
+        master = Thread.new {
             gets
             set_on_complete_handler
             @crawler.run
         }
+
+        # if the crawler has started without user input then someone else
+        # must be the master so take away its ability to become a master and
+        # create conflicts
+        @crawler.after_run { master.kill if master.alive? }
     end
 
+    #
+    # Shuts down the server
+    #
     def shutdown
         ::EM.stop
     end
 
+    #
+    # Adds a peer to the peer list
+    #
+    # Actually, it adds it to the whole grid as every node will start exchanging
+    # info until they gain identical knowledge of their surroundings.
+    #
+    # @param    [String]    url     peer url in the form of host:port
+    #
     def add_peer( url )
         peer_urls = @distributor.peer_urls
         return false if peer_urls.include?( url )
@@ -82,7 +98,7 @@ class Roundabout::RPC::Server
                     if res
                         puts 'All done, collecting sitemaps...'
                         collect_sitemaps do |sitemap|
-                            ap sitemap
+                            print_sitemap( sitemap )
                             kill_all { ::EM.stop }
                         end
                     else
@@ -91,6 +107,13 @@ class Roundabout::RPC::Server
                 end
             }
         }
+    end
+
+    def print_sitemap( sitemap )
+        puts
+        puts 'Sitemap: [' + sitemap.size.to_s + ']'
+        puts '----------'
+        sitemap.each { |url| puts url }
     end
 
     def all_done?( &block )
