@@ -29,5 +29,8 @@ module Roundabout
     end
 end
 
+# OSX was trying to load crawler.rb first which required the Utils
+require 'roundabout/utilities.rb'
+
 # require everything and be done with it, we need them all anyways
 Dir.glob( File.dirname( __FILE__ ) + '/**/*.rb' ).each { |p| require p }
